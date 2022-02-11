@@ -2,17 +2,22 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+import postRoutes from './routes/post.js';
 
 const app = express();
+dotenv.config()
 
 app.use(bodyParser.json({ limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true}));
 app.use(cors());
 
-const CONNECTION_URL = 'mongodb+srv://MERN-e-commerce:MERN-e-commerce@mern-e-commerce.qx5qb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+app.use('/posts', postRoutes);
+
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true})
         .then(() => app.listen(PORT, () => console.log('listening on port ' +PORT)))
         .catch((error) => console.log(error.message));
 
