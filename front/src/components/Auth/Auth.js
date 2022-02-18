@@ -20,7 +20,7 @@ const Auth = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState(initialState);
 
-    const handleShowPassword = () => setShowPassword((showPassword) => !showPassword);
+    const handleShowPassword = () => setShowPassword(!showPassword);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -72,7 +72,7 @@ const Auth = () => {
                         </>
                     ) }
                     <Input name="email" label="Email" handleChange={handleChange} type="email"  />
-                    <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? 'text' : 'password'} />
+                    <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? 'text' : 'password'} handleShowPassword={handleShowPassword} />
                     { isSignup && <Input name="confirmPassword" label="Repeat Password" handleChange={handleChange} type="password" /> }
                 </Grid>
                

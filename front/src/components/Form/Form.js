@@ -9,7 +9,7 @@ import useStyles from './styles';
 import { createPost, updatePost } from '../../actions/posts';
 
 const Form = ({ currentId, setCurrentId }) => {
-    const [postData, setPostData] = useState({  title: '', message: '', tags: '', selectedFile: ''});
+    const [postData, setPostData] = useState({  title: '', message: '', tags: [], selectedFile: ''});
     const post = useSelector((state) => currentId ? state.posts.posts.find((p) => p._id === currentId) : null);
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -32,16 +32,31 @@ const Form = ({ currentId, setCurrentId }) => {
 
     const clear = () => {
         setCurrentId(0);
-        setPostData({  title: '', message: '', tags: '', selectedFile: ''})
+        setPostData({  title: '', message: '', tags: [], selectedFile: ''})
     }
 
+    
     const handleAddChip = (tag) => {
         setPostData({ ...postData, tags: [...postData.tags, tag] });
-      };
-    
-    const handleDeleteChip = (chipToDelete) => {
-       setPostData({ ...postData, tags: postData.tags.filter((tag) => tag !== chipToDelete) });
     };
+
+    const handleDeleteChip = (chipToDelete) => {
+        setPostData({ ...postData, tags: postData.tags.filter((tag) => tag !== chipToDelete) });
+    };
+
+    const uploadImage = () => {
+        window.cloudinary
+          .openUploadWidget(
+            { cloud_name: "aziz-rbii", upload_preset: "vaxfytmr" },
+            (error, result) => {
+              if (!error && result && result.event === "success") {
+                console.log("Done uploading..: ", result);
+                setPostData({ ... postData, selectedFile: result.info.url })
+              }
+            }
+          )
+        .open();
+    }
 
     if(!user?.result?.name) {
         return (
@@ -72,7 +87,7 @@ const Form = ({ currentId, setCurrentId }) => {
                     />
                 </div>
                 <div className={classes.fileInput} >
-                    <FileBase type="file" multiple={false} onDone={({base64}) => setPostData({ ... postData, selectedFile: base64 })} />
+                    <Button variant="contained" color="secondary.light" size="large" onClick={uploadImage} fullWidth>UPLOAD</Button>
                 </div>
                 <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth>Submit</Button>
                 <Button variant="contained" color="secondary" size="small" onClick={clear} fullWidth>Clear</Button>
